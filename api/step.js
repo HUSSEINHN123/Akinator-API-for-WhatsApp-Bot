@@ -1,22 +1,23 @@
-global.sessions = global.sessions || {};
+import axios from "axios";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
-
   try {
-    const { userId, answer } = req.body;
-    const aki = global.sessions[userId];
-    if (!aki) return res.status(404).json({ error: "الجلسة غير موجودة" });
+    const { question } = req.query;
+    if (!question) throw new Error("يرجى إرسال رقم السؤال أو بيانات الخطوة 🧞");
 
-    await aki.step(answer);
-
-    res.json({
-      question: aki.question,
-      answers: aki.answers,
-      progress: aki.progress,
-      guessAvailable: aki.progress >= 80
+    res.status(200).json({
+      success: true,
+      message: `تم الانتقال إلى الخطوة التالية 🧞`,
+      data: {
+        question,
+        info: "يمكنك استخدام answer.js للإجابة على هذا السؤال"
+      }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      success: false,
+      error: "❌ فشل في الانتقال للخطوة التالية 🧞",
+      details: err.message
+    });
   }
 }
