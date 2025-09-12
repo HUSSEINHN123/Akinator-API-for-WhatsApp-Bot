@@ -1,20 +1,20 @@
-global.sessions = global.sessions || {};
+import axios from "axios";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
-
   try {
-    const { userId } = req.body;
-    const aki = global.sessions[userId];
-    if (!aki) return res.status(404).json({ error: "الجلسة غير موجودة" });
+    const { answer } = req.query;
+    if (!answer) throw new Error("يرجى إرسال إجابة 🧞");
 
-    const guess = await aki.win();
-
-    res.json({
-      message: "🔮 Akinator يظن أنك تفكر في:",
-      guess
+    res.status(200).json({
+      success: true,
+      message: `تم تسجيل إجابتك 🧞`,
+      data: { answer }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      success: false,
+      error: "❌ فشل في تسجيل الإجابة 🧞",
+      details: err.message
+    });
   }
 }
