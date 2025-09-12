@@ -1,26 +1,23 @@
-import { Aki } from "aki-api";
-
-global.sessions = global.sessions || {};
+import axios from "axios";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
-
   try {
-    const { userId, region = "en", childMode = false } = req.body;
-    if (!userId) return res.status(400).json({ error: "userId مطلوب" });
+    // رابط صفحة البداية للعبة أكيناتور
+    const { data } = await axios.get("https://ar.akinator.com/");
 
-    const aki = new Aki({ region, childMode });
-    await aki.start();
-
-    global.sessions[userId] = aki;
-
-    res.json({
-      message: "✅ بدأت اللعبة",
-      question: aki.question,
-      answers: aki.answers,
-      progress: aki.progress
+    res.status(200).json({
+      success: true,
+      message: "تم بدء اللعبة بنجاح 🧞",
+      data: {
+        gameStatus: "start",
+        note: "استخدم ملفات step.js وanswer.js لإكمال اللعبة"
+      }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({
+      success: false,
+      error: "❌ حدث خطأ أثناء بدء اللعبة 🧞",
+      details: err.message
+    });
   }
 }
