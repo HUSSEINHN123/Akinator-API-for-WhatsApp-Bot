@@ -1,0 +1,8 @@
+{
+  "name": "akinator-server",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "aki-api": "^7.0.1"
+  }
+}
